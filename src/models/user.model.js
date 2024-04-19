@@ -18,4 +18,4 @@ const userShema = new mongoose.Schema({
 const user = mongoose.model('Users', userShema);
 
 // Modülümüzü dışarıya açıyoruz.
-module.exports = user;
+export default user;
