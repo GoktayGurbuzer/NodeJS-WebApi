@@ -13,6 +13,7 @@ NodeJS ile bir webapi projesi nasıl oluşturulur, nelere dikkat edilir ve nası
 + **express-async-errors:** ExpressJS için son derece basit bir ES6 async/await desteği hack'i
 + **mongoose:** Mongoose, eşzamansız bir ortamda çalışmak üzere tasarlanmış bir MongoDB nesne modelleme aracıdır.
 + **bycrypt:** Parolaları karma hale getirmenize yardımcı olacak bir kütüphane.
++ **joi:** Kullanıcıdan aldığımız verilerin filtrelenmesi ve doğrulanmasını sağlayan kütüphane.
 
 
 ---
@@ -79,3 +80,23 @@ import APIError from "../utils/errors.js";
 .../
 throw new APIError("Girmiş Olduğunuz Email Kullanımda !", 401);
 ```
+
+## Response Yapısı
+Biz bir veriyi kullanıcıya nasıl gönderiyoruz? Fonksiyonlarımızdaki response yardımı, yani ``response.send()`` ya da ``res.json()`` komut seti ile. Fakat aynı düzende kullanıcıdan veri alamayabiliriz. İşte bunu düzgün ve düzenli bir şekilde yapabilmek için response yapısına ihtiyacımız bulunmakta. O zaman başlayalım.
+
+``utils/response.js`` dosyamızı düzenlemeye başlayalım. Class yapısı ile oluşturduğumuz yapımıza, kurucu metodumuzu tanımlayarak başlıyoruz. Ardından ihtiyacımız olan metodlarımızı yazmaya devam ediyoruz.
+
++ ``success:`` işlem başarılı olduğu durumlarda kullandığımız metodumuz.
++ ``created:`` kayıt oluşturma başarılı olduğu durumlarda kullandığımız metodumuz.
++ ``error500:`` genellikle API ile ilgili hata çıkabilecek yerlerde kullandığımız metodumuz.
++ ``error400:`` erişim sorunları ile ilgili hatalarda kullanacağımız metodumuz.
++ ``error401:`` başarısız giriş ve geçersiz token için kullandığımız hata metodumuz.
++ ``error404:`` bilinmeyen hata işlemlerinde kullandığımız hata metodumuz.
++ ``error429:`` istek/limit aşımı olduğu durumlarda kullandığımız hata metodu.
+
+Evet, şimdilik bu kadar. Eğer sizin kullanmak istediğiniz farklı hata durumları varsa, ``utils/response.js`` dosyamıza eklemeler veya düzeltmeler yapabilirsiniz. Şimdi ise yazdığımız bu modülleri, ``controllers/auth.controller.js`` dosyamızda tanımlama zamanı.
+
+### Validasyon İşlemleri
+Şimdi en ciddi konulardan diğeri olan Validasyon işlemlerine geldik. Kullanıcıdan aldığımız veriler sayesinde işlettiğimiz programımız, kötü niyetli kişilerin otomatik olarak hedefi halindedir. Bu sebeple dışarıdan gelen tüm verileri kontrol etmek ve filtrelemek bizler için çok önemli. Bu sebeple ``joi`` paketinden destek alacağız. ``joi`` ara yazılım olduğu için(middleware) tanımlamayı ``middlewares\validations\auth.validations.js`` dosyamızdan başlayalım.
+
+``joi`` kütüphanesi ile validasyon, gördüğünüz gibi çok kolay. Neredeyse tek satırda işlemlerimizi tatmin edici şekilde halledebiliyoruz. Daha fazla bilgi için [Joi Dökümanı](https://joi.dev/api)nı kontrol edebilirsiniz.
